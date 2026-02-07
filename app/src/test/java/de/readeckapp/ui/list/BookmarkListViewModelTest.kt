@@ -72,6 +72,7 @@ class BookmarkListViewModelTest {
         every { bookmarkRepository.observeAllBookmarkCounts() } returns flowOf(BookmarkCounts())
         every { settingsDataStore.openLinksExternallyFlow } returns MutableStateFlow(false)
         every { settingsDataStore.archiveOnExternalOpenFlow } returns MutableStateFlow(false)
+        every { settingsDataStore.hideArchivedFromAllFlow } returns MutableStateFlow(false)
     }
 
     @After

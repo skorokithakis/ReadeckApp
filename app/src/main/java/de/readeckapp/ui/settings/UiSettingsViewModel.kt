@@ -34,6 +34,7 @@ class UiSettingsViewModel @Inject constructor(
     private val showDialog = MutableStateFlow(false)
     private val openLinksExternally = settingsDataStore.openLinksExternallyFlow
     private val archiveOnExternalOpen = settingsDataStore.archiveOnExternalOpenFlow
+    private val hideArchivedFromAll = settingsDataStore.hideArchivedFromAllFlow
 
     init {
         viewModelScope.launch {
@@ -42,7 +43,10 @@ class UiSettingsViewModel @Inject constructor(
     }
 
 
-    val uiState = combine(theme, showDialog, openLinksExternally, archiveOnExternalOpen) { theme, showDialog, openLinksExternally, archiveOnExternalOpen ->
+    val uiState = combine(
+        combine(theme, showDialog, openLinksExternally) { t, s, o -> Triple(t, s, o) },
+        combine(archiveOnExternalOpen, hideArchivedFromAll) { a, h -> Pair(a, h) }
+    ) { (theme, showDialog, openLinksExternally), (archiveOnExternalOpen, hideArchivedFromAll) ->
         UiSettingsUiState(
             theme = theme,
             themeOptions = getThemeOptionList(theme),
@@ -50,6 +54,7 @@ class UiSettingsViewModel @Inject constructor(
             themeLabel = theme.toLabelResource(),
             openLinksExternally = openLinksExternally,
             archiveOnExternalOpen = archiveOnExternalOpen,
+            hideArchivedFromAll = hideArchivedFromAll,
         )
     }
         .stateIn(
@@ -63,6 +68,7 @@ class UiSettingsViewModel @Inject constructor(
                     themeLabel = Theme.SYSTEM.toLabelResource(),
                     openLinksExternally = false,
                     archiveOnExternalOpen = false,
+                    hideArchivedFromAll = false,
                 )
         )
 
@@ -92,6 +98,12 @@ class UiSettingsViewModel @Inject constructor(
     fun onToggleArchiveOnExternalOpen(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.setArchiveOnExternalOpen(enabled)
+        }
+    }
+
+    fun onToggleHideArchivedFromAll(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setHideArchivedFromAll(enabled)
         }
     }
 
@@ -130,6 +142,7 @@ data class UiSettingsUiState(
     val themeLabel: Int,
     val openLinksExternally: Boolean,
     val archiveOnExternalOpen: Boolean,
+    val hideArchivedFromAll: Boolean,
 )
 
 data class ThemeOption(

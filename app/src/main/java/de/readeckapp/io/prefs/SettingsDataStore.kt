@@ -34,4 +34,6 @@ interface SettingsDataStore {
     suspend fun setOpenLinksExternally(enabled: Boolean)
     val archiveOnExternalOpenFlow: StateFlow<Boolean>
     suspend fun setArchiveOnExternalOpen(enabled: Boolean)
+    val hideArchivedFromAllFlow: StateFlow<Boolean>
+    suspend fun setHideArchivedFromAll(enabled: Boolean)
 }

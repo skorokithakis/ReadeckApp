@@ -47,6 +47,7 @@ fun UiSettingsScreen(
     val onClickTheme: () -> Unit = { viewModel.onClickTheme() }
     val onToggleOpenLinksExternally: (Boolean) -> Unit = { viewModel.onToggleOpenLinksExternally(it) }
     val onToggleArchiveOnExternalOpen: (Boolean) -> Unit = { viewModel.onToggleArchiveOnExternalOpen(it) }
+    val onToggleHideArchivedFromAll: (Boolean) -> Unit = { viewModel.onToggleHideArchivedFromAll(it) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = navigationEvent.value) {
@@ -75,6 +76,7 @@ fun UiSettingsScreen(
         onClickTheme = onClickTheme,
         onToggleOpenLinksExternally = onToggleOpenLinksExternally,
         onToggleArchiveOnExternalOpen = onToggleArchiveOnExternalOpen,
+        onToggleHideArchivedFromAll = onToggleHideArchivedFromAll,
         settingsUiState = settingsUiState
     )
 }
@@ -89,6 +91,7 @@ fun UiSettingsView(
     onClickBack: () -> Unit,
     onToggleOpenLinksExternally: (Boolean) -> Unit,
     onToggleArchiveOnExternalOpen: (Boolean) -> Unit,
+    onToggleHideArchivedFromAll: (Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -172,6 +175,26 @@ fun UiSettingsView(
                     enabled = settingsUiState.openLinksExternally,
                 )
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(
+                    enabled = true,
+                    onClick = { onToggleHideArchivedFromAll(!settingsUiState.hideArchivedFromAll) }
+                )
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.ui_settings_hide_archived_from_all))
+                    Text(
+                        text = stringResource(R.string.ui_settings_hide_archived_from_all_description),
+                        style = Typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = settingsUiState.hideArchivedFromAll,
+                    onCheckedChange = onToggleHideArchivedFromAll,
+                )
+            }
         }
     }
 }
@@ -186,6 +209,7 @@ fun UiSettingsScreenViewPreview() {
         themeLabel = Theme.SYSTEM.toLabelResource(),
         openLinksExternally = false,
         archiveOnExternalOpen = false,
+        hideArchivedFromAll = false,
     )
     UiSettingsView(
         modifier = Modifier,
@@ -194,6 +218,7 @@ fun UiSettingsScreenViewPreview() {
         onClickTheme = {},
         onToggleOpenLinksExternally = {},
         onToggleArchiveOnExternalOpen = {},
+        onToggleHideArchivedFromAll = {},
         settingsUiState = settingsUiState
     )
 }

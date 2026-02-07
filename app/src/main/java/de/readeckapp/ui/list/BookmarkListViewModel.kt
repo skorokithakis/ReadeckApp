@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.map
@@ -49,6 +50,7 @@ class BookmarkListViewModel @Inject constructor(
     val openUrlEvent = _openUrlEvent.asStateFlow()
 
     val openLinksExternally: StateFlow<Boolean> = settingsDataStore.openLinksExternallyFlow
+    val hideArchivedFromAll: StateFlow<Boolean> = settingsDataStore.hideArchivedFromAllFlow
 
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
@@ -104,11 +106,19 @@ class BookmarkListViewModel @Inject constructor(
         }
 
         viewModelScope.launch(loadBookmarkExceptionHandler) {
-            filterState.collectLatest { filterState ->
+            combine(_filterState, settingsDataStore.hideArchivedFromAllFlow) { filterState, hideArchivedFromAll ->
+                Pair(filterState, hideArchivedFromAll)
+            }.collectLatest { (filterState, hideArchivedFromAll) ->
+                val isAllView = filterState == FilterState()
+                val archivedFilter = if (isAllView && hideArchivedFromAll) {
+                    false
+                } else {
+                    filterState.archived
+                }
                 bookmarkRepository.observeBookmarkListItems(
                     type = filterState.type,
                     unread = filterState.unread,
-                    archived = filterState.archived,
+                    archived = archivedFilter,
                     favorite = filterState.favorite,
                     state = Bookmark.State.LOADED
                 ).collectLatest {

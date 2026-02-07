@@ -73,6 +73,8 @@ other{}
     <string name="ui_settings_open_links_externally_description">Mark as read when opening external links</string>
     <string name="ui_settings_archive_on_external_open">Archive when opening externally</string>
     <string name="ui_settings_archive_on_external_open_description">Automatically archive bookmarks opened in external browser</string>
+    <string name="ui_settings_hide_archived_from_all">Hide archived from \'all\'</string>
+    <string name="ui_settings_hide_archived_from_all_description">Don\'t show archived bookmarks in the \'all\' view</string>
     <string name="ui_settings_theme_heading">Theming</string>
     <string name="ui_settings_theme_dialog_support_text">Which theme should be used?</string>
 

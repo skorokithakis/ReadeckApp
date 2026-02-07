@@ -84,6 +84,7 @@ fun BookmarkListScreen(navHostController: NavHostController) {
     val uiState = viewModel.uiState.collectAsState().value
     val createBookmarkUiState = viewModel.createBookmarkUiState.collectAsState().value
     val bookmarkCounts = viewModel.bookmarkCounts.collectAsState()
+    val hideArchivedFromAll = viewModel.hideArchivedFromAll.collectAsState()
 
     // Collect filter states
     val filterState = viewModel.filterState.collectAsState()
@@ -162,13 +163,16 @@ fun BookmarkListScreen(navHostController: NavHostController) {
                         ) },
                         icon = { Icon(Icons.Outlined.Bookmarks, contentDescription = null) },
                         badge = {
-                            bookmarkCounts.value.total.let { count ->
-                                if (count > 0) {
-                                    Badge(containerColor = MaterialTheme.colorScheme.secondaryContainer) {
-                                        Text(
-                                            text = count.toString()
-                                        )
-                                    }
+                            val count = if (hideArchivedFromAll.value) {
+                                bookmarkCounts.value.total - bookmarkCounts.value.archived
+                            } else {
+                                bookmarkCounts.value.total
+                            }
+                            if (count > 0) {
+                                Badge(containerColor = MaterialTheme.colorScheme.secondaryContainer) {
+                                    Text(
+                                        text = count.toString()
+                                    )
                                 }
                             }
                         },

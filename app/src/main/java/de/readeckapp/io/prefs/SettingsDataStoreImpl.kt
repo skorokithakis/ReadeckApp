@@ -35,6 +35,7 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
     private val KEY_ZOOM_FACTOR = intPreferencesKey("zoom_factor")
     private val KEY_OPEN_LINKS_EXTERNALLY = booleanPreferencesKey("open_links_externally")
     private val KEY_ARCHIVE_ON_EXTERNAL_OPEN = booleanPreferencesKey("archive_on_external_open")
+    private val KEY_HIDE_ARCHIVED_FROM_ALL = booleanPreferencesKey("hide_archived_from_all")
 
     override fun saveUsername(username: String) {
         Timber.d("saveUsername")
@@ -143,6 +144,12 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
         }
     }
 
+    override suspend fun setHideArchivedFromAll(enabled: Boolean) {
+        encryptedSharedPreferences.edit {
+            putBoolean(KEY_HIDE_ARCHIVED_FROM_ALL.name, enabled)
+        }
+    }
+
     override val tokenFlow = getStringFlow(KEY_TOKEN.name, null)
     override val usernameFlow = getStringFlow(KEY_USERNAME.name, null)
     override val urlFlow = getStringFlow(KEY_URL.name, null)
@@ -151,6 +158,7 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
     override val zoomFactorFlow = getIntFlow(KEY_ZOOM_FACTOR.name, 100)
     override val openLinksExternallyFlow = getBooleanFlow(KEY_OPEN_LINKS_EXTERNALLY.name, false)
     override val archiveOnExternalOpenFlow = getBooleanFlow(KEY_ARCHIVE_ON_EXTERNAL_OPEN.name, false)
+    override val hideArchivedFromAllFlow = getBooleanFlow(KEY_HIDE_ARCHIVED_FROM_ALL.name, false)
     override suspend fun clearCredentials() {
         Timber.d("clearCredentials")
         encryptedSharedPreferences.edit(commit = true) {
