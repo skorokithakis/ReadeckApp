@@ -66,6 +66,7 @@ class BookmarkDetailViewModel @Inject constructor(
             }
         }
     }
+    val openLinksExternally: StateFlow<Boolean> = settingsDataStore.openLinksExternallyFlow
     private val zoomFactor: Flow<Int> = settingsDataStore.zoomFactorFlow
     private val updateState = MutableStateFlow<UpdateBookmarkState?>(null)
 
@@ -185,8 +186,11 @@ class BookmarkDetailViewModel @Inject constructor(
         }
     }
 
-    fun onClickOpenUrl(url: String){
-         _openUrlEvent.value = url
+    fun onClickOpenUrl(url: String) {
+        if (settingsDataStore.openLinksExternallyFlow.value) {
+            onToggleMarkRead(bookmarkId!!, true)
+        }
+        _openUrlEvent.value = url
     }
 
     fun onClickBack() {

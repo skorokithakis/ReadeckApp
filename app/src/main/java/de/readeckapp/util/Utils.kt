@@ -89,6 +89,13 @@ private fun findFirstUrlInLine(line: String): String? {
 
 private val URL_REGEX = """(https?://[^\s]+)""".toRegex()
 
+fun openUrlInExternalBrowser(context: Context, url: String) {
+    if (url.isValidUrl()) {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+        context.startActivity(intent)
+    }
+}
+
 fun openUrlInCustomTab(context: Context, url: String) {
     if(url.isValidUrl()) {
         try {

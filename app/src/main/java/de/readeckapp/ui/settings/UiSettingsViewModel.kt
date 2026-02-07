@@ -32,6 +32,7 @@ class UiSettingsViewModel @Inject constructor(
     val navigationEvent: StateFlow<NavigationEvent?> = _navigationEvent.asStateFlow()
     private val theme = MutableStateFlow(Theme.SYSTEM)
     private val showDialog = MutableStateFlow(false)
+    private val openLinksExternally = settingsDataStore.openLinksExternallyFlow
 
     init {
         viewModelScope.launch {
@@ -40,12 +41,13 @@ class UiSettingsViewModel @Inject constructor(
     }
 
 
-    val uiState = combine(theme, showDialog) { theme, showDialog ->
+    val uiState = combine(theme, showDialog, openLinksExternally) { theme, showDialog, openLinksExternally ->
         UiSettingsUiState(
             theme = theme,
             themeOptions = getThemeOptionList(theme),
             showDialog = showDialog,
             themeLabel = theme.toLabelResource(),
+            openLinksExternally = openLinksExternally,
         )
     }
         .stateIn(
@@ -57,6 +59,7 @@ class UiSettingsViewModel @Inject constructor(
                     themeOptions = getThemeOptionList(Theme.SYSTEM),
                     showDialog = false,
                     themeLabel = Theme.SYSTEM.toLabelResource(),
+                    openLinksExternally = false,
                 )
         )
 
@@ -75,6 +78,12 @@ class UiSettingsViewModel @Inject constructor(
     fun onThemeSelected(selected: Theme) {
         Timber.d("onThemeSyncTimeframeSelected [selected=$selected]")
         updateTheme(selected)
+    }
+
+    fun onToggleOpenLinksExternally(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setOpenLinksExternally(enabled)
+        }
     }
 
     fun onClickBack() {
@@ -110,6 +119,7 @@ data class UiSettingsUiState(
     val showDialog: Boolean,
     @StringRes
     val themeLabel: Int,
+    val openLinksExternally: Boolean,
 )
 
 data class ThemeOption(

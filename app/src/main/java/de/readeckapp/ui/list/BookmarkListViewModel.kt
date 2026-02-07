@@ -48,6 +48,8 @@ class BookmarkListViewModel @Inject constructor(
     private val _openUrlEvent = MutableStateFlow<String>("")
     val openUrlEvent = _openUrlEvent.asStateFlow()
 
+    val openLinksExternally: StateFlow<Boolean> = settingsDataStore.openLinksExternallyFlow
+
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
 
@@ -192,8 +194,17 @@ class BookmarkListViewModel @Inject constructor(
     }
 
     fun onClickBookmark(bookmarkId: String) {
-        Timber.d("onClickSettings")
-        _navigationEvent.update { NavigationEvent.NavigateToBookmarkDetail(bookmarkId) }
+        Timber.d("onClickBookmark [bookmarkId=$bookmarkId]")
+        if (settingsDataStore.openLinksExternallyFlow.value) {
+            val url = (_uiState.value as? UiState.Success)
+                ?.bookmarks?.find { it.id == bookmarkId }?.url
+            if (url != null) {
+                _openUrlEvent.value = url
+                onToggleMarkReadBookmark(bookmarkId, true)
+            }
+        } else {
+            _navigationEvent.update { NavigationEvent.NavigateToBookmarkDetail(bookmarkId) }
+        }
     }
 
     fun onClickOpenInBrowser(url: String){

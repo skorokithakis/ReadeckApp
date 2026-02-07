@@ -30,4 +30,6 @@ interface SettingsDataStore {
     suspend fun getTheme(): Theme
     suspend fun  getZoomFactor(): Int
     suspend fun  saveZoomFactor(zoomFactor: Int)
+    val openLinksExternallyFlow: StateFlow<Boolean>
+    suspend fun setOpenLinksExternally(enabled: Boolean)
 }

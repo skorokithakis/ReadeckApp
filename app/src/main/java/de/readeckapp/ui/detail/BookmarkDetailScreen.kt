@@ -73,6 +73,7 @@ import de.readeckapp.R
 import de.readeckapp.domain.model.Template
 import de.readeckapp.ui.components.ErrorPlaceholderImage
 import de.readeckapp.util.openUrlInCustomTab
+import de.readeckapp.util.openUrlInExternalBrowser
 import de.readeckapp.ui.components.ShareBookmarkChooser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -112,8 +113,13 @@ fun BookmarkDetailScreen(navHostController: NavController, bookmarkId: String?) 
     }
 
     val context = LocalContext.current
-    LaunchedEffect(key1 = openUrlEvent.value){
-        openUrlInCustomTab(context, openUrlEvent.value)
+    val openLinksExternally = viewModel.openLinksExternally.collectAsState()
+    LaunchedEffect(key1 = openUrlEvent.value) {
+        if (openLinksExternally.value) {
+            openUrlInExternalBrowser(context, openUrlEvent.value)
+        } else {
+            openUrlInCustomTab(context, openUrlEvent.value)
+        }
         viewModel.onOpenUrlEventConsumed()
     }
 

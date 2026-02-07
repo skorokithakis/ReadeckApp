@@ -70,6 +70,7 @@ import de.readeckapp.ui.components.ShareBookmarkChooser
 import de.readeckapp.ui.navigation.BookmarkDetailRoute
 import de.readeckapp.ui.navigation.SettingsRoute
 import de.readeckapp.util.openUrlInCustomTab
+import de.readeckapp.util.openUrlInExternalBrowser
 import kotlinx.coroutines.launch
 import androidx.compose.material3.Badge
 import de.readeckapp.ui.theme.Typography
@@ -128,8 +129,13 @@ fun BookmarkListScreen(navHostController: NavHostController) {
     }
 
     val context = LocalContext.current
+    val openLinksExternally = viewModel.openLinksExternally.collectAsState()
     LaunchedEffect(key1 = openUrlEvent.value) {
-        openUrlInCustomTab(context, openUrlEvent.value)
+        if (openLinksExternally.value) {
+            openUrlInExternalBrowser(context, openUrlEvent.value)
+        } else {
+            openUrlInCustomTab(context, openUrlEvent.value)
+        }
         viewModel.onOpenUrlEventConsumed()
     }
 

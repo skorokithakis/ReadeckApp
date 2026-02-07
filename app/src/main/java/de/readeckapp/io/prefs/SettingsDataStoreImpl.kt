@@ -33,6 +33,7 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
     private val KEY_AUTOSYNC_TIMEFRAME = stringPreferencesKey("autosync_timeframe")
     private val KEY_THEME = stringPreferencesKey("theme")
     private val KEY_ZOOM_FACTOR = intPreferencesKey("zoom_factor")
+    private val KEY_OPEN_LINKS_EXTERNALLY = booleanPreferencesKey("open_links_externally")
 
     override fun saveUsername(username: String) {
         Timber.d("saveUsername")
@@ -129,12 +130,19 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
         }
     }
 
+    override suspend fun setOpenLinksExternally(enabled: Boolean) {
+        encryptedSharedPreferences.edit {
+            putBoolean(KEY_OPEN_LINKS_EXTERNALLY.name, enabled)
+        }
+    }
+
     override val tokenFlow = getStringFlow(KEY_TOKEN.name, null)
     override val usernameFlow = getStringFlow(KEY_USERNAME.name, null)
     override val urlFlow = getStringFlow(KEY_URL.name, null)
     override val passwordFlow = getStringFlow(KEY_PASSWORD.name, null)
     override val themeFlow = getStringFlow(KEY_THEME.name, Theme.SYSTEM.name)
     override val zoomFactorFlow = getIntFlow(KEY_ZOOM_FACTOR.name, 100)
+    override val openLinksExternallyFlow = getBooleanFlow(KEY_OPEN_LINKS_EXTERNALLY.name, false)
     override suspend fun clearCredentials() {
         Timber.d("clearCredentials")
         encryptedSharedPreferences.edit(commit = true) {
@@ -165,6 +173,9 @@ class SettingsDataStoreImpl @Inject constructor(@ApplicationContext private val 
 
     private fun getIntFlow(key: String, defaultValue: Int = 100): StateFlow<Int> =
         preferenceFlow(key) { encryptedSharedPreferences.getInt(key, defaultValue) }
+
+    private fun getBooleanFlow(key: String, defaultValue: Boolean = false): StateFlow<Boolean> =
+        preferenceFlow(key) { encryptedSharedPreferences.getBoolean(key, defaultValue) }
 
     private fun <T> preferenceFlow(key: String, getValue: () -> T): StateFlow<T> { // Create our flow using callbackflow
         // Emit initial value when we start collecting from this flow (if it exists) or use default one from params in function call above!  This is important so consumers know initial state!  Can skip this and just send updates if you do not need initial state emission on subscribe time!  That could be fine too depending on your use case - remember that!  Also you can send null as the "initial" value as well if you want!

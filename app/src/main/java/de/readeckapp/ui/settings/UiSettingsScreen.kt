@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ fun UiSettingsScreen(
     val navigationEvent = viewModel.navigationEvent.collectAsState()
     val onClickBack: () -> Unit = { viewModel.onClickBack() }
     val onClickTheme: () -> Unit = { viewModel.onClickTheme() }
+    val onToggleOpenLinksExternally: (Boolean) -> Unit = { viewModel.onToggleOpenLinksExternally(it) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = navigationEvent.value) {
@@ -70,6 +72,7 @@ fun UiSettingsScreen(
         snackbarHostState = snackbarHostState,
         onClickBack = onClickBack,
         onClickTheme = onClickTheme,
+        onToggleOpenLinksExternally = onToggleOpenLinksExternally,
         settingsUiState = settingsUiState
     )
 }
@@ -82,6 +85,7 @@ fun UiSettingsView(
     settingsUiState: UiSettingsUiState,
     onClickTheme: () -> Unit,
     onClickBack: () -> Unit,
+    onToggleOpenLinksExternally: (Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -124,6 +128,26 @@ fun UiSettingsView(
                     )
                 }
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(
+                    enabled = true,
+                    onClick = { onToggleOpenLinksExternally(!settingsUiState.openLinksExternally) }
+                )
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.ui_settings_open_links_externally))
+                    Text(
+                        text = stringResource(R.string.ui_settings_open_links_externally_description),
+                        style = Typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = settingsUiState.openLinksExternally,
+                    onCheckedChange = onToggleOpenLinksExternally,
+                )
+            }
         }
     }
 }
@@ -136,12 +160,14 @@ fun UiSettingsScreenViewPreview() {
         themeOptions = listOf(),
         showDialog = false,
         themeLabel = Theme.SYSTEM.toLabelResource(),
+        openLinksExternally = false,
     )
     UiSettingsView(
         modifier = Modifier,
         snackbarHostState = SnackbarHostState(),
         onClickBack = {},
         onClickTheme = {},
+        onToggleOpenLinksExternally = {},
         settingsUiState = settingsUiState
     )
 }
