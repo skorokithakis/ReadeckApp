@@ -32,4 +32,6 @@ interface SettingsDataStore {
     suspend fun  saveZoomFactor(zoomFactor: Int)
     val openLinksExternallyFlow: StateFlow<Boolean>
     suspend fun setOpenLinksExternally(enabled: Boolean)
+    val archiveOnExternalOpenFlow: StateFlow<Boolean>
+    suspend fun setArchiveOnExternalOpen(enabled: Boolean)
 }

@@ -70,6 +70,8 @@ class BookmarkListViewModelTest {
         every { savedStateHandle.get<String>(any()) } returns null // no sharedUrl initially
         every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns workInfoFlow
         every { bookmarkRepository.observeAllBookmarkCounts() } returns flowOf(BookmarkCounts())
+        every { settingsDataStore.openLinksExternallyFlow } returns MutableStateFlow(false)
+        every { settingsDataStore.archiveOnExternalOpenFlow } returns MutableStateFlow(false)
     }
 
     @After

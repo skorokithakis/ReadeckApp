@@ -46,6 +46,7 @@ fun UiSettingsScreen(
     val onClickBack: () -> Unit = { viewModel.onClickBack() }
     val onClickTheme: () -> Unit = { viewModel.onClickTheme() }
     val onToggleOpenLinksExternally: (Boolean) -> Unit = { viewModel.onToggleOpenLinksExternally(it) }
+    val onToggleArchiveOnExternalOpen: (Boolean) -> Unit = { viewModel.onToggleArchiveOnExternalOpen(it) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = navigationEvent.value) {
@@ -73,6 +74,7 @@ fun UiSettingsScreen(
         onClickBack = onClickBack,
         onClickTheme = onClickTheme,
         onToggleOpenLinksExternally = onToggleOpenLinksExternally,
+        onToggleArchiveOnExternalOpen = onToggleArchiveOnExternalOpen,
         settingsUiState = settingsUiState
     )
 }
@@ -86,6 +88,7 @@ fun UiSettingsView(
     onClickTheme: () -> Unit,
     onClickBack: () -> Unit,
     onToggleOpenLinksExternally: (Boolean) -> Unit,
+    onToggleArchiveOnExternalOpen: (Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -148,6 +151,27 @@ fun UiSettingsView(
                     onCheckedChange = onToggleOpenLinksExternally,
                 )
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(
+                    enabled = settingsUiState.openLinksExternally,
+                    onClick = { onToggleArchiveOnExternalOpen(!settingsUiState.archiveOnExternalOpen) }
+                )
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.ui_settings_archive_on_external_open))
+                    Text(
+                        text = stringResource(R.string.ui_settings_archive_on_external_open_description),
+                        style = Typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = settingsUiState.archiveOnExternalOpen,
+                    onCheckedChange = onToggleArchiveOnExternalOpen,
+                    enabled = settingsUiState.openLinksExternally,
+                )
+            }
         }
     }
 }
@@ -161,6 +185,7 @@ fun UiSettingsScreenViewPreview() {
         showDialog = false,
         themeLabel = Theme.SYSTEM.toLabelResource(),
         openLinksExternally = false,
+        archiveOnExternalOpen = false,
     )
     UiSettingsView(
         modifier = Modifier,
@@ -168,6 +193,7 @@ fun UiSettingsScreenViewPreview() {
         onClickBack = {},
         onClickTheme = {},
         onToggleOpenLinksExternally = {},
+        onToggleArchiveOnExternalOpen = {},
         settingsUiState = settingsUiState
     )
 }

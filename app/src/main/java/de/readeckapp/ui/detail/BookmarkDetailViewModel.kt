@@ -189,6 +189,9 @@ class BookmarkDetailViewModel @Inject constructor(
     fun onClickOpenUrl(url: String) {
         if (settingsDataStore.openLinksExternallyFlow.value) {
             onToggleMarkRead(bookmarkId!!, true)
+            if (settingsDataStore.archiveOnExternalOpenFlow.value) {
+                onToggleArchive(bookmarkId!!, true)
+            }
         }
         _openUrlEvent.value = url
     }

@@ -33,6 +33,7 @@ class UiSettingsViewModel @Inject constructor(
     private val theme = MutableStateFlow(Theme.SYSTEM)
     private val showDialog = MutableStateFlow(false)
     private val openLinksExternally = settingsDataStore.openLinksExternallyFlow
+    private val archiveOnExternalOpen = settingsDataStore.archiveOnExternalOpenFlow
 
     init {
         viewModelScope.launch {
@@ -41,13 +42,14 @@ class UiSettingsViewModel @Inject constructor(
     }
 
 
-    val uiState = combine(theme, showDialog, openLinksExternally) { theme, showDialog, openLinksExternally ->
+    val uiState = combine(theme, showDialog, openLinksExternally, archiveOnExternalOpen) { theme, showDialog, openLinksExternally, archiveOnExternalOpen ->
         UiSettingsUiState(
             theme = theme,
             themeOptions = getThemeOptionList(theme),
             showDialog = showDialog,
             themeLabel = theme.toLabelResource(),
             openLinksExternally = openLinksExternally,
+            archiveOnExternalOpen = archiveOnExternalOpen,
         )
     }
         .stateIn(
@@ -60,6 +62,7 @@ class UiSettingsViewModel @Inject constructor(
                     showDialog = false,
                     themeLabel = Theme.SYSTEM.toLabelResource(),
                     openLinksExternally = false,
+                    archiveOnExternalOpen = false,
                 )
         )
 
@@ -83,6 +86,12 @@ class UiSettingsViewModel @Inject constructor(
     fun onToggleOpenLinksExternally(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.setOpenLinksExternally(enabled)
+        }
+    }
+
+    fun onToggleArchiveOnExternalOpen(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setArchiveOnExternalOpen(enabled)
         }
     }
 
@@ -120,6 +129,7 @@ data class UiSettingsUiState(
     @StringRes
     val themeLabel: Int,
     val openLinksExternally: Boolean,
+    val archiveOnExternalOpen: Boolean,
 )
 
 data class ThemeOption(

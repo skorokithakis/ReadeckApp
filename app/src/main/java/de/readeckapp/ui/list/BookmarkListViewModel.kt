@@ -201,6 +201,9 @@ class BookmarkListViewModel @Inject constructor(
             if (url != null) {
                 _openUrlEvent.value = url
                 onToggleMarkReadBookmark(bookmarkId, true)
+                if (settingsDataStore.archiveOnExternalOpenFlow.value) {
+                    onToggleArchiveBookmark(bookmarkId, true)
+                }
             }
         } else {
             _navigationEvent.update { NavigationEvent.NavigateToBookmarkDetail(bookmarkId) }

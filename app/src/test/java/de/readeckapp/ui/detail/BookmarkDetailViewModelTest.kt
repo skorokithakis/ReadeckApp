@@ -55,6 +55,8 @@ class BookmarkDetailViewModelTest {
         every { savedStateHandle.get<String>("bookmarkId") } returns "123"
         every { settingsDataStore.themeFlow } returns MutableStateFlow(Theme.LIGHT.name)
         every { settingsDataStore.zoomFactorFlow } returns MutableStateFlow(100)
+        every { settingsDataStore.openLinksExternallyFlow } returns MutableStateFlow(false)
+        every { settingsDataStore.archiveOnExternalOpenFlow } returns MutableStateFlow(false)
         viewModel = BookmarkDetailViewModel(updateBookmarkUseCase, bookmarkRepository, assetLoader, settingsDataStore, savedStateHandle)
     }
 
