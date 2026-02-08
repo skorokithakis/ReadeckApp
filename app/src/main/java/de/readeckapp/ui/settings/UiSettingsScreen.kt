@@ -48,6 +48,7 @@ fun UiSettingsScreen(
     val onToggleOpenLinksExternally: (Boolean) -> Unit = { viewModel.onToggleOpenLinksExternally(it) }
     val onToggleArchiveOnExternalOpen: (Boolean) -> Unit = { viewModel.onToggleArchiveOnExternalOpen(it) }
     val onToggleHideArchivedFromAll: (Boolean) -> Unit = { viewModel.onToggleHideArchivedFromAll(it) }
+    val onToggleQuickAddOnShare: (Boolean) -> Unit = { viewModel.onToggleQuickAddOnShare(it) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = navigationEvent.value) {
@@ -77,6 +78,7 @@ fun UiSettingsScreen(
         onToggleOpenLinksExternally = onToggleOpenLinksExternally,
         onToggleArchiveOnExternalOpen = onToggleArchiveOnExternalOpen,
         onToggleHideArchivedFromAll = onToggleHideArchivedFromAll,
+        onToggleQuickAddOnShare = onToggleQuickAddOnShare,
         settingsUiState = settingsUiState
     )
 }
@@ -92,6 +94,7 @@ fun UiSettingsView(
     onToggleOpenLinksExternally: (Boolean) -> Unit,
     onToggleArchiveOnExternalOpen: (Boolean) -> Unit,
     onToggleHideArchivedFromAll: (Boolean) -> Unit,
+    onToggleQuickAddOnShare: (Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -195,6 +198,26 @@ fun UiSettingsView(
                     onCheckedChange = onToggleHideArchivedFromAll,
                 )
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(
+                    enabled = true,
+                    onClick = { onToggleQuickAddOnShare(!settingsUiState.quickAddOnShare) }
+                )
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.ui_settings_quick_add_on_share))
+                    Text(
+                        text = stringResource(R.string.ui_settings_quick_add_on_share_description),
+                        style = Typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = settingsUiState.quickAddOnShare,
+                    onCheckedChange = onToggleQuickAddOnShare,
+                )
+            }
         }
     }
 }
@@ -210,6 +233,7 @@ fun UiSettingsScreenViewPreview() {
         openLinksExternally = false,
         archiveOnExternalOpen = false,
         hideArchivedFromAll = false,
+        quickAddOnShare = false,
     )
     UiSettingsView(
         modifier = Modifier,
@@ -219,6 +243,7 @@ fun UiSettingsScreenViewPreview() {
         onToggleOpenLinksExternally = {},
         onToggleArchiveOnExternalOpen = {},
         onToggleHideArchivedFromAll = {},
+        onToggleQuickAddOnShare = {},
         settingsUiState = settingsUiState
     )
 }

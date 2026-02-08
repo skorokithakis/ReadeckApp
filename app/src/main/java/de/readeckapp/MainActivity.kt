@@ -42,6 +42,7 @@ import de.readeckapp.ui.settings.SettingsScreen
 import de.readeckapp.ui.settings.SyncSettingsScreen
 import de.readeckapp.ui.settings.UiSettingsScreen
 import de.readeckapp.ui.theme.ReadeckAppTheme
+import de.readeckapp.util.extractUrlAndTitle
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -71,7 +72,25 @@ class MainActivity : ComponentActivity() {
                                 Toast.makeText(context, noValidUrlMessage, Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            navController.navigate(BookmarkListRoute(sharedText = sharedText))
+                            val quickAddEnabled = viewModel.settingsDataStore.quickAddOnShareFlow.value
+                            if (quickAddEnabled) {
+                                val extractedData = sharedText.extractUrlAndTitle()
+                                if (extractedData != null) {
+                                    val success = viewModel.quickAddBookmark(extractedData.url)
+                                    val message = if (success) {
+                                        context.getString(R.string.quick_add_bookmark_success)
+                                    } else {
+                                        context.getString(R.string.quick_add_bookmark_error)
+                                    }
+                                    val toastLength = if (success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+                                    Toast.makeText(context, message, toastLength).show()
+                                    (context as? ComponentActivity)?.finish()
+                                } else {
+                                    Toast.makeText(context, noValidUrlMessage, Toast.LENGTH_LONG).show()
+                                }
+                            } else {
+                                navController.navigate(BookmarkListRoute(sharedText = sharedText))
+                            }
                         }
                     }
                     if (newIntent.hasExtra("navigateToAccountSettings")) {

@@ -75,8 +75,12 @@ other{}
     <string name="ui_settings_archive_on_external_open_description">Automatically archive bookmarks opened in external browser</string>
     <string name="ui_settings_hide_archived_from_all">Hide archived from \'all\'</string>
     <string name="ui_settings_hide_archived_from_all_description">Don\'t show archived bookmarks in the \'all\' view</string>
+    <string name="ui_settings_quick_add_on_share">Quick add when sharing</string>
+    <string name="ui_settings_quick_add_on_share_description">Skip the dialog and add bookmarks immediately when sharing a link</string>
     <string name="ui_settings_theme_heading">Theming</string>
     <string name="ui_settings_theme_dialog_support_text">Which theme should be used?</string>
+    <string name="quick_add_bookmark_success">Bookmark added</string>
+    <string name="quick_add_bookmark_error">Failed to add bookmark</string>
 
     <!-- Bookmark Card Actions -->
     <string name="action_favorite">Favorite</string>

@@ -35,6 +35,7 @@ class UiSettingsViewModel @Inject constructor(
     private val openLinksExternally = settingsDataStore.openLinksExternallyFlow
     private val archiveOnExternalOpen = settingsDataStore.archiveOnExternalOpenFlow
     private val hideArchivedFromAll = settingsDataStore.hideArchivedFromAllFlow
+    private val quickAddOnShare = settingsDataStore.quickAddOnShareFlow
 
     init {
         viewModelScope.launch {
@@ -45,8 +46,8 @@ class UiSettingsViewModel @Inject constructor(
 
     val uiState = combine(
         combine(theme, showDialog, openLinksExternally) { t, s, o -> Triple(t, s, o) },
-        combine(archiveOnExternalOpen, hideArchivedFromAll) { a, h -> Pair(a, h) }
-    ) { (theme, showDialog, openLinksExternally), (archiveOnExternalOpen, hideArchivedFromAll) ->
+        combine(archiveOnExternalOpen, hideArchivedFromAll, quickAddOnShare) { a, h, q -> Triple(a, h, q) }
+    ) { (theme, showDialog, openLinksExternally), (archiveOnExternalOpen, hideArchivedFromAll, quickAddOnShare) ->
         UiSettingsUiState(
             theme = theme,
             themeOptions = getThemeOptionList(theme),
@@ -55,6 +56,7 @@ class UiSettingsViewModel @Inject constructor(
             openLinksExternally = openLinksExternally,
             archiveOnExternalOpen = archiveOnExternalOpen,
             hideArchivedFromAll = hideArchivedFromAll,
+            quickAddOnShare = quickAddOnShare,
         )
     }
         .stateIn(
@@ -69,6 +71,7 @@ class UiSettingsViewModel @Inject constructor(
                     openLinksExternally = false,
                     archiveOnExternalOpen = false,
                     hideArchivedFromAll = false,
+                    quickAddOnShare = false,
                 )
         )
 
@@ -104,6 +107,12 @@ class UiSettingsViewModel @Inject constructor(
     fun onToggleHideArchivedFromAll(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.setHideArchivedFromAll(enabled)
+        }
+    }
+
+    fun onToggleQuickAddOnShare(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setQuickAddOnShare(enabled)
         }
     }
 
@@ -143,6 +152,7 @@ data class UiSettingsUiState(
     val openLinksExternally: Boolean,
     val archiveOnExternalOpen: Boolean,
     val hideArchivedFromAll: Boolean,
+    val quickAddOnShare: Boolean,
 )
 
 data class ThemeOption(

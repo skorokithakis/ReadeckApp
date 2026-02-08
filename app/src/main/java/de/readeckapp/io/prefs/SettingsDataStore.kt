@@ -36,4 +36,6 @@ interface SettingsDataStore {
     suspend fun setArchiveOnExternalOpen(enabled: Boolean)
     val hideArchivedFromAllFlow: StateFlow<Boolean>
     suspend fun setHideArchivedFromAll(enabled: Boolean)
+    val quickAddOnShareFlow: StateFlow<Boolean>
+    suspend fun setQuickAddOnShare(enabled: Boolean)
 }
